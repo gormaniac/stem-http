@@ -2,9 +2,9 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath("../src"))
 
-project = "{{NAME}}"
-copyright = "{{YEAR}}, {{AUTHOR}}"
-author = "{{AUTHOR}}"
+project = "stem_http"
+copyright = "2024, John Gorman"
+author = "John Gorman"
 
 extensions = ["sphinx.ext.autodoc", "sphinx.ext.githubpages"]
 

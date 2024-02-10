@@ -1,13 +1,13 @@
-:github_url: {{GHBASE}}/{{NAME}}
+:github_url: https://github.com/gormaniac/stem-http
 
-Welcome to {{NAME}}'s documentation!
+Welcome to stem-http's documentation!
 =======================================
 
 .. toctree::
    :maxdepth: 3
    :caption: Contents:
 
-   {{NAME}}
+   stem-http
 
 * :ref:`modindex`
 * :ref:`search`

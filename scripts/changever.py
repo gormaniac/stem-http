@@ -12,7 +12,7 @@ PYPROJECT = "pyproject.toml"
 with open(PYPROJECT, "r") as fd:
     toml = tomlkit.load(fd)
 
-PKGINIT = f"src/{toml['project']['name']}/__init__.py"
+PKGINIT = "src/stem_http/__init__.py"
 PYVERSIONRE = re.compile(r'(__version__\s?\=\s?)".+"(\n)')
 
 try:

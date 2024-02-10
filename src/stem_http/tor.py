@@ -7,7 +7,17 @@ import stem.process
 
 
 class ProxyMgr:
-    """Manages a Tor Proxy process attached to the calling process."""
+    """Manages a Tor Proxy process attached to the calling process.
+    
+    May be used as a contextmanager that automatically kills the Tor
+    process when it exits.
+
+    TODO - Support country changes
+    TODO - Allow configurable ports
+    TODO - Try ports incrementally until a process can start
+           This allows for multiple ``ProxyMgr`` objects to run at once.
+    TODO - Expose a method to open raw sockets through the proxy.
+    """
 
     def __init__(self) -> None:
         self.socks_port = 9050
@@ -26,6 +36,8 @@ class ProxyMgr:
         """Kill the tor process.
         
         Must be done before exiting Python or the tor process may persist.
+        The process is supposed to be killed when Python is killed, but this
+        allows for it to happen gracefully, and with the caller's control.
         """
 
         self.process.kill()

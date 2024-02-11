@@ -48,9 +48,17 @@ version: # Display the version of stem-http installed in the pipenv
 
 .PHONY: release
 release: change-version clean setup build docs # Build a new versioned release and push it (requires VERSION=#.#.#)
-	git add dist/* doc/* docs/* pyproject.toml $(PKG_DIR)/__init__.py
+	git add doc/* docs/* pyproject.toml $(PKG_DIR)/__init__.py
 	git commit -m "build: release v$(VERSION)"
 	git push
 	git tag -a v$(VERSION) -m "Release v$(VERSION)"
 	git push origin v$(VERSION)
 	$(MAKE) clean-py
+
+.PHONY: tests
+tests: # Run the pytest suite for this project.
+	pipenv run pytest tests/
+
+.PHONY: pypi
+pypi: # Upload all Python packages in "dist/" to PyPI.
+	pipenv run python3 -m twine upload dist/*

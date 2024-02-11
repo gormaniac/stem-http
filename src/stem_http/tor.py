@@ -18,6 +18,11 @@ class ProxyMgr:
     May be used as a contextmanager that automatically kills the Tor
     process when it exits.
 
+    You cannot have more than one Tor proxy running on a host at once
+    (at least not without extra config). So this object does not support that.
+    If more than one instance of this object connected to the same prox is running
+    at once, any changes this object makes effect the Tor proxy for all instances.
+
     TODO - Support country changes
     TODO - Expose a method to open raw sockets through the proxy.
 
@@ -28,8 +33,8 @@ class ProxyMgr:
     retry : bool, optional
         Try starting a managed Tor process multiple times until one can start,
         by default ``True``.
-    countries : Optional[list], optional
-        A list of countries to use as exit nodes, by default ``None``.
+    country : Optional[str], optional
+        The country to use when selecting exit nodes, by default ``None``.
     passw : Optional[str], optional
         An optional password to authenticate to the Tor proxy's control port,
         by default ``None``.
@@ -42,6 +47,10 @@ class ProxyMgr:
         Raise an exception if reusing an existing proxy fails. If ``False``, the object
         tries to start a managed process on the specified ports when reuse fails.
         By default ``False``.
+    log_file : Optional[str], option
+        The file to write tor logs to. By default ``/tmp/tor_log``.
+    tor_debug : bool, options
+        Whether to configure tor with debug logging, by default ``False``.
 
     Raises
     ------

@@ -8,7 +8,8 @@ import stem.control
 import stem.process
 
 
-BIND_FAIL_MSG = "Process terminated: Failed to bind one of the listener ports."
+BIND_FAIL_MSG = "Failed to bind one of the listener ports."
+BROKEN_CONF_MSG = "Acting on config options left us in a broken state. Dying."
 
 
 class ProxyMgr:
@@ -45,23 +46,33 @@ class ProxyMgr:
     Raises
     ------
     RuntimeError
-        When reusing a proxy fails and ``exit_on_reuse_fail`` is ``True``.
+        - When reusing a proxy fails and ``exit_on_reuse_fail`` is ``True``.
+        - When there's already a Tor proxy running on this host or there's a config error.
+        - When there's been too many retries while starting a new Tor process.
+    OSError
+        When ever there's an error starting the Tor process.
+        See the ``log_file`` for details.
     """
 
     def __init__(
         self,
         reuse: bool = False,
         retry: bool = True,
-        countries: Optional[list] = None,
+        country: Optional[str] = None,
         passw: Optional[str] = None,
         socks_port: int = 9050,
         cntrl_port: int = 9051,
-        exit_on_reuse_fail: bool = False
+        exit_on_reuse_fail: bool = False,
+        log_file: Optional[str] = "/tmp/tor_log",
+        tor_debug: bool = False,
     ) -> None:
+        self.log_level = "DEBUG" if tor_debug else "NOTICE"
+        self.tor_log = log_file
+
         self.cntrl_passw = passw
         self.reuse = reuse
         self.retry = retry
-        self.countries = countries
+        self.country = country
 
         self.socks_port = socks_port
         self.cntrl_port = cntrl_port
@@ -88,7 +99,7 @@ class ProxyMgr:
         self.cntrlr = stem.control.Controller.from_port(port=self.cntrl_port)
         self.cntrlr.authenticate(password=self.cntrl_passw)
 
-    def start(self, retries=10):
+    def start(self, retries: int = 10):
         """Start a managed Tor process.
 
         Supports retrying the process if an existing process owns the SOCKS or
@@ -109,25 +120,43 @@ class ProxyMgr:
             When there's an error starting the Tor subprocess.
         """
 
+        tor_conf = {
+            "ControlPort": str(self.cntrl_port),
+            "SocksPort": str(self.socks_port),
+        }
+
+        if self.tor_log:
+            tor_conf["Log"] = [
+                f"{self.log_level} file {self.tor_log}",
+            ]
+
+        if self.country:
+            tor_conf["ExitNodes"] = "{%s}" % self.country
+
         try:
             self.process: subprocess.Popen = stem.process.launch_tor_with_config(
-                config={
-                    "ControlPort": str(self.cntrl_port),
-                    "SocksPort": str(self.socks_port),
-                },
+                config=tor_conf,
                 take_ownership=True,
             )
         except OSError as err:
-            if str(err) == BIND_FAIL_MSG and self.retry and retries > 0:
-                self.socks_port += 2
-                self.cntrl_port += 2
+            if BIND_FAIL_MSG in str(err) and self.retry and retries > 0:
+                self._bump_ports()
                 # TODO - Make retries configurable? This limits number of instances.
                 retries -= 1
                 self.start(retries=retries)
+            elif BROKEN_CONF_MSG in str(err):
+                raise RuntimeError(
+                    "Config error, there might be another instance of Tor running! "
+                    f"Try using the 'reuse' arg.\n{err}"
+                ) from err
             elif retries == 0:
-                raise RuntimeError("Max number of ProxyMgr instances reached!") from err
+                raise RuntimeError("Max number of ProxyMgr retries reached!") from err
             else:
                 raise err
+
+    def _bump_ports(self):
+        self.socks_port += 2
+        self.cntrl_port += 2
 
     def stop(self):
         """Kill the tor process.

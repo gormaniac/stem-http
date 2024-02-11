@@ -7,7 +7,7 @@ Welcome to stem-http's documentation!
    :maxdepth: 3
    :caption: Contents:
 
-   stem-http
+   stem_http
 
 * :ref:`modindex`
 * :ref:`search`

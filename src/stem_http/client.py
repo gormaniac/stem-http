@@ -1,16 +1,13 @@
 """The HTTP client code."""
 
-import logging
 from typing import Any, Mapping, Optional
 
 import aiohttp
 import aiohttp.typedefs
 import aiohttp_socks
 
+from . import LOG
 from . import tor
-
-
-LOG = logging.getLogger(__name__)
 
 
 class TorHttpClient:

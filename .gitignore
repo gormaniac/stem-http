@@ -6,3 +6,4 @@ docs/.doctrees/
 Pipfile.lock
 dist
 build
+.DS_Store

@@ -13,10 +13,10 @@ black = "*"
 build = "*"
 pylint = "*"
 setuptools = "*"
-sphinx = "*"
-sphinx-rtd-theme = "*"
 tomlkit = "*"
 twine = "*"
+shibuya = "*"
+sphinx = ">=8.0.0"
 
 [requires]
 python_version = "3.11"

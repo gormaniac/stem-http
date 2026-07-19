@@ -6,11 +6,42 @@ project = "stem_http"
 copyright = "2024, John Gorman"
 author = "John Gorman"
 
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.githubpages"]
+extensions = ["sphinx.ext.autodoc"]
 
 templates_path = ["_templates"]
 exclude_patterns = []
 
+html_theme = "shibuya"
+html_static_path = ["_static"]
+html_title = "stem_http Docs"
 
-html_theme = "sphinx_rtd_theme"
-html_static_path = []
+html_baseurl = 'https://docs.gormo.co/stem-http/'
+
+html_theme_options = {
+    "accent_color": "teal",
+    "color_mode": "auto",
+    "nav_socials": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/gormaniac/stem-http",
+            "icon": "simple-icons:github",
+        },
+        {
+            "name": "PyPI",
+            "url": "https://pypi.org/project/stem-http/",
+            "icon": "simple-icons:pypi",
+        },
+    ],
+    "foot_socials": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/gormaniac/stem-http",
+            "icon": "simple-icons:github",
+        },
+        {
+            "name": "PyPI",
+            "url": "https://pypi.org/project/stem-http/",
+            "icon": "simple-icons:pypi",
+        },
+    ]
+}

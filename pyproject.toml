@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stem-http"
-version = "0.3.0"
+version = "0.3.1"
 description = "The stem-http Python package"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -20,7 +20,7 @@ file = "LICENSE"
 
 [project.urls]
 Homepage = "https://github.com/gormaniac/stem-http"
-Documentation = "https://gormo.co/stem-http/"
+Documentation = "https://docs.gormo.co/stem-http/"
 
 [tool.setuptools.packages.find]
 namespaces = true
